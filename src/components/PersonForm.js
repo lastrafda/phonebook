@@ -1,7 +1,7 @@
 import React from 'react'
 
 
-const PersonForm = ({ addPerson, newName, newPhone, handlePhoneChange, handleNameChange}) => {
+const PersonForm = ({ addPerson, newName, newNumber, handleNumberChange, handleNameChange}) => {
 	return (
 		<div>
 			<form onSubmit={ addPerson }>
@@ -9,7 +9,7 @@ const PersonForm = ({ addPerson, newName, newPhone, handlePhoneChange, handleNam
           name: <input value={ newName } onChange={ handleNameChange }/>
         </div>
         <div>
-          phone: <input value={ newPhone } onChange={ handlePhoneChange }/>
+          Number: <input value={ newNumber } onChange={ handleNumberChange }/>
         </div>
         <div>
           <button type='submit'>add</button>
