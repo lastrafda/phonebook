@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import shortid from 'shortid';
 import Filter from './components/Filter'
-
+import PersonForm from './components/PersonForm'
 
 function App() {
   const [ persons, setPersons ] = useState([
@@ -41,17 +41,8 @@ function App() {
     <div>
       <h1>Phonebook</h1>
       <Filter filter={ filter}  onChange={ handleFilterChange } />
-      <form onSubmit={ addPerson }>
-        <div>
-          name: <input value={ newName } onChange={ handleNameChange }/>
-        </div>
-        <div>
-          phone: <input value={ newPhone } onChange={ handlePhoneChange }/>
-        </div>
-        <div>
-          <button type='submit'>add</button>
-        </div>
-      </form>
+      <h3>Add a new</h3>
+      <PersonForm addPerson={addPerson} newName={newName} newPhone={newPhone} handleNameChange={handleNameChange} handlePhoneChange={handlePhoneChange}/>
       <h2>Numbers</h2>
       <ul>
         {personFilter().map((x) => <li key={shortid.generate()}>{x.name}</li>)}
