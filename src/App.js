@@ -1,24 +1,36 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
 
 function App() {
+  const [ persons, setPersons ] = useState([
+    { name: 'José Lastra'}
+  ])
+  const [ newName, setNewName] = useState('')
+  const nameIsAlreadyAdded = persons.filter((x) => x.name === newName)
+  const handleNameChange = (event) => {
+    return setNewName(event.target.value);
+  }
+  const addPerson = (event) => {
+    event.preventDefault()
+    if (!nameIsAlreadyAdded.length) {
+        setPersons(persons.concat({ name: newName }))
+        setNewName('')
+    } else {
+      alert(`${newName} is already added to phonebook`)
+    }
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>Phonebook</h1>
+      <form onSubmit={ addPerson }>
+        <div>
+          name: <input value={newName} onChange={handleNameChange}/>
+        </div>
+        <div>
+          <button type='submit'>add</button>
+        </div>
+      </form>
+      <h2>Numbers</h2>
     </div>
   );
 }
