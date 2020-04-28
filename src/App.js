@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import shortid from 'shortid';
+import Filter from './components/Filter'
+
 
 function App() {
   const [ persons, setPersons ] = useState([
@@ -38,9 +40,7 @@ function App() {
   return (
     <div>
       <h1>Phonebook</h1>
-      <div>
-        filter shown with <input value={ filter } onChange={ handleFilterChange }/>
-      </div>
+      <Filter filter={ filter}  onChange={ handleFilterChange } />
       <form onSubmit={ addPerson }>
         <div>
           name: <input value={ newName } onChange={ handleNameChange }/>
