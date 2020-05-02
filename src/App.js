@@ -1,20 +1,24 @@
-import React, { useState } from 'react';
+import axios from 'axios'
+import React, { useState, useEffect } from 'react';
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
-
+import personService from './services/persons'
 
 function App() {
-  const [ persons, setPersons ] = useState([
-    { name: 'José Lastra', number: '981570911' },
-    { name: 'Arto Hellas', number: '040-123456' },
-    { name: 'Ada Lovelace', number: '39-44-5323523' },
-    { name: 'Dan Abramov', number: '12-43-234345' },
-    { name: 'Mary Poppendieck', number: '39-23-6423122' }
-  ])
+  const [ persons, setPersons ] = useState([])
   const [ newName, setNewName] = useState('')
   const [ newNumber, setNewNumber] = useState('')
   const [ filter, setFilter] = useState('')
+
+  useEffect(() => {
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        setPersons(response.data)
+      })
+  },[])
+
   const handleNameChange = (e) => setNewName(e.target.value)
   const handleNumberChange = (e) => setNewNumber(e.target.value)
   const handleFilterChange = (e) => {
@@ -25,13 +29,18 @@ function App() {
     if (newName === '' || newNumber === '') return
     const nameIsAlreadyAdded = persons.find((x) => x.name === newName)
     if (!nameIsAlreadyAdded) {
-      let person = { 
+      let personObject = { 
         name: newName,
         number: newNumber
       }
-      setPersons(persons.concat(person))
-      setNewName('')
-      setNewNumber('')
+      personService.create(personObject)
+        .then(returnedPerson => {
+          setPersons(persons.concat(returnedPerson))
+          setNewName('')
+          setNewNumber('')
+        })
+        .catch(error => alert('fail'))
+
     } else {
       alert(`${newName} is already added to phonebook`)
     }
