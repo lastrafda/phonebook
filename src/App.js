@@ -48,9 +48,9 @@ function App() {
 
   const handleDelete = person => {
     personService.destroy(person.id)
-      .then(response => console.log(response))
+      .then(response => setPersons(persons.filter((p) => p.id !== person.id)))
       .catch(error => alert('fail'))
-    setPersons(persons.filter((p) => p.id !== person.id))
+    
   }
   const personFilter = () => persons.filter((x) => x.name.toUpperCase().includes(filter.toUpperCase()))
 
