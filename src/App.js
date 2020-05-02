@@ -4,12 +4,14 @@ import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 import personService from './services/persons'
+import Notification from './components/Notification'
 
 function App() {
   const [ persons, setPersons ] = useState([])
   const [ newName, setNewName] = useState('')
   const [ newNumber, setNewNumber] = useState('')
   const [ filter, setFilter] = useState('')
+  const [ notificationMessage, setNotificationMessage] = useState(null)
 
   useEffect(() => {
     axios
@@ -42,6 +44,7 @@ function App() {
         .then(returnedPerson => {
           setPersons(persons.concat(returnedPerson))
           clearForm()
+          notify(`Added ${personObject.name}`, 4000)
         })
         .catch(error => alert('fail'))
 
@@ -67,6 +70,7 @@ function App() {
     personService.update(id, changedPerson)
       .then(returnedPerson => {
         setPersons(persons.map(p => p.id !== id ? p : changedPerson))
+        notify(`Updated ${changedPerson.name}`, 4000)
       })
       .catch(error => {
         alert(`The person ${changedPerson.name} was already deleted from server`)
@@ -74,11 +78,19 @@ function App() {
       })
   }
 
+  const notify = (message, duration) => {
+    setNotificationMessage(message)
+    setTimeout(() => {
+      setNotificationMessage(null)
+    }, duration)
+  }
+
   const personFilter = () => persons.filter((x) => x.name.toUpperCase().includes(filter.toUpperCase()))
 
   return (
     <div>
       <h1>Phonebook</h1>
+      <Notification message={ notificationMessage }/>
       <Filter filter={ filter}  onChange={ handleFilterChange } />
       <h3>Add a new</h3>
       <PersonForm addPerson={addPerson} newName={newName} newNumber={newNumber} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange}/>
