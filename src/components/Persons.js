@@ -3,10 +3,12 @@ import shortid from 'shortid'
 
 
 const Persons = ({personFilter}) => {
+	const liStyle = {
+		listSyle: 'none'
+	}
 	return (
-
 			<ul>
-        {personFilter().map((x) => <li key={shortid.generate()}>{`${x.name} ${x.number}`}</li>)}
+        <li>{personFilter().map((x) => <li key={shortid.generate()} style={liStyle}>{`${x.name} ${x.number}`}</li>)}</li>
       </ul>
 	)
 }
