@@ -45,6 +45,13 @@ function App() {
       alert(`${newName} is already added to phonebook`)
     }
   }
+
+  const handleDelete = person => {
+    personService.destroy(person.id)
+      .then(response => console.log(response))
+      .catch(error => alert('fail'))
+    setPersons(persons.filter((p) => p.id !== person.id))
+  }
   const personFilter = () => persons.filter((x) => x.name.toUpperCase().includes(filter.toUpperCase()))
 
   return (
@@ -54,7 +61,7 @@ function App() {
       <h3>Add a new</h3>
       <PersonForm addPerson={addPerson} newName={newName} newNumber={newNumber} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange}/>
       <h2>Numbers</h2>
-      <Persons personFilter={personFilter} />
+      <Persons personFilter={personFilter} onDelete={handleDelete} />
     </div>
   );
 }
