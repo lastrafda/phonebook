@@ -19,6 +19,11 @@ function App() {
       })
   },[])
 
+  const clearForm = () => {
+    setNewName('')
+    setNewNumber('')
+  }
+
   const handleNameChange = (e) => setNewName(e.target.value)
   const handleNumberChange = (e) => setNewNumber(e.target.value)
   const handleFilterChange = (e) => {
@@ -27,8 +32,8 @@ function App() {
   const addPerson = (e) => {
     e.preventDefault()
     if (newName === '' || newNumber === '') return
-    const nameIsAlreadyAdded = persons.find((x) => x.name === newName)
-    if (!nameIsAlreadyAdded) {
+    const foundPerson = persons.find((x) => x.name === newName)
+    if (!foundPerson) {
       let personObject = { 
         name: newName,
         number: newNumber
@@ -36,22 +41,39 @@ function App() {
       personService.create(personObject)
         .then(returnedPerson => {
           setPersons(persons.concat(returnedPerson))
-          setNewName('')
-          setNewNumber('')
+          clearForm()
         })
         .catch(error => alert('fail'))
 
     } else {
-      alert(`${newName} is already added to phonebook`)
+      if (window.confirm(`${foundPerson.name} is already added to phonebook, replace the old number with a new one?`)) {
+        changeNumber(foundPerson.id)
+        clearForm()
+      }
     }
   }
 
   const handleDelete = person => {
-    personService.destroy(person.id)
+    if (window.confirm(`Delete ${person.name}?`)) {
+      personService.destroy(person.id)
       .then(response => setPersons(persons.filter((p) => p.id !== person.id)))
       .catch(error => alert('fail'))
-    
+    }
   }
+
+  const changeNumber = id =>  {
+    const person = persons.find(p => p.id === id)
+    const changedPerson = {...person, number: newNumber}
+    personService.update(id, changedPerson)
+      .then(returnedPerson => {
+        setPersons(persons.map(p => p.id !== id ? p : changedPerson))
+      })
+      .catch(error => {
+        alert(`The person ${changedPerson.name} was already deleted from server`)
+        setPersons(persons.filter(p => p.id !== id))
+      })
+  }
+
   const personFilter = () => persons.filter((x) => x.name.toUpperCase().includes(filter.toUpperCase()))
 
   return (
