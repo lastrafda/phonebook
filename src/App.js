@@ -60,7 +60,10 @@ function App() {
     if (window.confirm(`Delete ${person.name}?`)) {
       personService.destroy(person.id)
       .then(response => setPersons(persons.filter((p) => p.id !== person.id)))
-      .catch(error => alert('fail'))
+      .catch(error => {
+        alert(`The person ${person.name} was already deleted from server`)
+        setPersons(persons.filter(p => p.id !== person.id))
+      })
     }
   }
 
