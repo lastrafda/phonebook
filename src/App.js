@@ -11,7 +11,7 @@ function App() {
   const [ newName, setNewName] = useState('')
   const [ newNumber, setNewNumber] = useState('')
   const [ filter, setFilter] = useState('')
-  const [ notificationMessage, setNotificationMessage] = useState(null)
+  const [ notification, setNotification] = useState({message: null, type: null})
 
   useEffect(() => {
     axios
@@ -44,9 +44,12 @@ function App() {
         .then(returnedPerson => {
           setPersons(persons.concat(returnedPerson))
           clearForm()
-          notify(`Added ${personObject.name}`, 4000)
+          notify(`Added ${personObject.name}`, 'success', 3000)
         })
-        .catch(error => alert('fail'))
+        .catch(error => {
+          notify(`The person ${personObject.name} was already deleted from server`, 'error', 3000 )
+          setPersons(persons.filter(p => p.id !== personObject.id))
+        })
 
     } else {
       if (window.confirm(`${foundPerson.name} is already added to phonebook, replace the old number with a new one?`)) {
@@ -59,9 +62,13 @@ function App() {
   const handleDelete = person => {
     if (window.confirm(`Delete ${person.name}?`)) {
       personService.destroy(person.id)
-      .then(response => setPersons(persons.filter((p) => p.id !== person.id)))
+      .then(response => {
+        notify(`Deleted ${person.name}`, 'error', 3000)
+        setPersons(persons.filter(p => p.id !== person.id))
+        return setPersons(persons.filter((p) => p.id !== person.id));
+      })
       .catch(error => {
-        alert(`The person ${person.name} was already deleted from server`)
+        notify(`The person ${person.name} was already deleted from server`, 'error', 3000 )
         setPersons(persons.filter(p => p.id !== person.id))
       })
     }
@@ -73,18 +80,18 @@ function App() {
     personService.update(id, changedPerson)
       .then(returnedPerson => {
         setPersons(persons.map(p => p.id !== id ? p : changedPerson))
-        notify(`Updated ${changedPerson.name}`, 4000)
+        notify(`Updated ${changedPerson.name}`, 'success', 3000)
       })
       .catch(error => {
-        alert(`The person ${changedPerson.name} was already deleted from server`)
+        notify(`The person ${changedPerson.name} was already deleted from server`, 'error', 3000 )
         setPersons(persons.filter(p => p.id !== id))
       })
   }
 
-  const notify = (message, duration) => {
-    setNotificationMessage(message)
+  const notify = (message, type, duration) => {
+    setNotification({...notification, message: message, type: type})
     setTimeout(() => {
-      setNotificationMessage(null)
+      setNotification({...notification, message: null, type: null})
     }, duration)
   }
 
@@ -93,7 +100,7 @@ function App() {
   return (
     <div>
       <h1>Phonebook</h1>
-      <Notification message={ notificationMessage }/>
+      <Notification message={ notification.message } type={ notification.type }/>
       <Filter filter={ filter}  onChange={ handleFilterChange } />
       <h3>Add a new</h3>
       <PersonForm addPerson={addPerson} newName={newName} newNumber={newNumber} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange}/>
