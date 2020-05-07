@@ -1,4 +1,3 @@
-import axios from 'axios'
 import React, { useState, useEffect } from 'react';
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
@@ -14,11 +13,8 @@ function App() {
   const [ notification, setNotification] = useState({message: null, type: null})
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data)
-      })
+    personService.all()
+      .then(returnedPersons => setPersons(returnedPersons))
   },[])
 
   const clearForm = () => {
@@ -47,10 +43,10 @@ function App() {
           notify(`Added ${personObject.name}`, 'success', 3000)
         })
         .catch(error => {
-          notify(`The person ${personObject.name} was already deleted from server`, 'error', 3000 )
+          const message = error.response.data.error
+          notify(message, 'error', 3000 ) 
           setPersons(persons.filter(p => p.id !== personObject.id))
         })
-
     } else {
       if (window.confirm(`${foundPerson.name} is already added to phonebook, replace the old number with a new one?`)) {
         changeNumber(foundPerson.id)
@@ -79,10 +75,12 @@ function App() {
     const changedPerson = {...person, number: newNumber}
     personService.update(id, changedPerson)
       .then(returnedPerson => {
-        setPersons(persons.map(p => p.id !== id ? p : changedPerson))
+        setPersons(persons.map(p => p.id !== id ? p : returnedPerson))
         notify(`Updated ${changedPerson.name}`, 'success', 3000)
       })
       .catch(error => {
+        console.log(error);
+        
         notify(`The person ${changedPerson.name} was already deleted from server`, 'error', 3000 )
         setPersons(persons.filter(p => p.id !== id))
       })
