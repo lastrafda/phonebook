@@ -15,7 +15,6 @@ const Notification = ({ message, type }) => {
 			fontSize: '16px',
 			borderRadius: '15px'
 		}
-		console.log(type, 'type')
 		if (type === 'success') {
 			return {...baseStyle, color: 'green', border: 'solid 1px green'}
 		}
