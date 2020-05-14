@@ -1,9 +1,7 @@
 Este proyecto fue creado con [Create React App](https://github.com/facebook/create-react-app).
 Es un ejercicio "Phonebook" del mooc [fullstackopen.com/en/](fullstackopen.com/en/)
 Consiste en una aplicación para guardar números de teléfono de personas.
-
-## Live Demo
-[https://joself-courseinfo.netlify.app/](https://joself-courseinfo.netlify.app/) 
+ 
 
 ## Levantar el proyecto localmente
 
